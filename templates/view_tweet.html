@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery
+    ====================================================================== -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    
+    <style type="text/css">
+    .inlineli{
+        display:inline-block;
+        margin: 10px;
+        list-style: none;
+        border: 1px solid #333;
+        padding: 5px;
+    }
+    .imgdata{
+        display: block;
+        width: 100%;
+        font-size: 10px;
+        font-family: "Verdana";
+        font-weight: 500;
+    }
+    .matchpct{
+        display: block;
+        font-size: 10px;
+        font-family: "Verdana";
+        font-weight: 500;
+        background:#4585F2;
+    }
+    </style>
+    <title>Tweeter NLP Demo view 1</title>
+</head>
+<body>
+    <!-- Fine Uploader DOM Element
+    ====================================================================== -->
+    <div id="text_holder"></div>
+    <div id="matches"></div>
+    <!-- Your code to create an instance of Fine Uploader and bind to the DOM/template
+    ====================================================================== -->
+    <script>
+        
+
+        $(document).ready(function(){
+            setInterval(function(){initiateSearch();},10000);
+			
+        });    
+
+        var initiateSearch = function(){
+            var host_uri = 'http://localhost:5000';
+            $.ajax({
+                url: host_uri + "/searchprocess",
+				//url: host_uri + "/static/feed.json",
+                type: 'POST',
+                data: JSON.stringify({}),
+                dataType    : 'json',
+                contentType : "application/json",
+                "cache": false,
+                success: function(response, status){
+                    response.length;
+					//console.log(response);
+					
+					$.each(response, function(index, item){
+					//if(item.created_at) { $('#matches').prepend($('<p/>').html(item.text)); }
+					$('#matches').prepend($('<div class="tweet"><img src="' + item.profile_image_url + '"/>'+item.text+'<div class="time">'+ item.created_at +'</div> </div>').show('slow') );
+				  });
+                    //$('#matches').html(html);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

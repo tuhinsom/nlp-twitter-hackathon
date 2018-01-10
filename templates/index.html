@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery
+    ====================================================================== -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    
+    <style type="text/css">
+    #text_holder ul li{
+        display:inline-block;
+        margin: 10px;
+        list-style: none;
+        border: 1px solid #333;
+        padding: 5px;
+		text-decoration:none;
+    }
+    </style>
+    <title>Tweeter NLP Demo Index page</title>
+</head>
+<body>
+    <!-- Fine Uploader DOM Element
+    ====================================================================== -->
+    <div id="text_holder">
+	<ul>
+		<li><a href="/tweetsearch">Click To View Latest Tweet Feed</li>
+		<li><a href="/tweetanalyze">Click To View Tweet History Analysis</li>
+	</ul>
+	</div>
+</body>
+</html>

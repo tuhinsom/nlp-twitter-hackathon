@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery
+    ====================================================================== -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+
+    
+    <style type="text/css">
+    .inlineli{
+        display:inline-block;
+        margin: 10px;
+        list-style: none;
+        border: 1px solid #333;
+        padding: 5px;
+    }
+    .imgdata{
+        display: block;
+        width: 100%;
+        font-size: 10px;
+        font-family: "Verdana";
+        font-weight: 500;
+    }
+    .matchpct{
+        display: block;
+        font-size: 10px;
+        font-family: "Verdana";
+        font-weight: 500;
+        background:#4585F2;
+    }
+    </style>
+    <title>Tweeter NLP Demo view 2</title>
+</head>
+<body>
+    <!-- Fine Uploader DOM Element
+    ====================================================================== -->
+    <div id="text_holder"><label for="from">From</label>
+<input type="text" id="from" name="from">
+<label for="to">to</label>
+<input type="text" id="to" name="to">&nbsp;<button type="buton" id="retrieve" >Retrieve</button></div>
+    <div id="matches"></div>
+	<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog"  style="display:none;">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+    <!-- Your code to create an instance of Fine Uploader and bind to the DOM/template
+    ====================================================================== -->
+    <script>
+        
+		var from='';
+		var to='';
+        $(document).ready(function(){
+            var dateFormat = "yy-mm-dd 00:00:00",
+			  from = $( "#from" )
+				.datepicker({
+				  defaultDate: "+1w",
+				  changeMonth: true,
+				  numberOfMonths: 1,
+				  dateFormat: dateFormat
+				})
+				.on( "change", function() {
+				  to.datepicker( "option", "minDate", getDate( this ) );
+				  
+				}),
+			  to = $( "#to" ).datepicker({
+				defaultDate: "+1w",
+				changeMonth: true,
+				numberOfMonths: 1,
+				dateFormat: dateFormat
+			  })
+			  .on( "change", function() {
+				from.datepicker( "option", "maxDate", getDate( this ) );
+				
+			  });
+
+
+			$(document).on('click','#retrieve',function(){
+				initiateAnalysis($('#from').val(), $('#to').val());
+			});
+			$(document).on('click','.tweet_dataframe tbody tr',function(){
+				drillAnalysis($(this).find('td:nth-child(5)').html(), $(this).find('td:nth-child(4)').html(),$('#from').val(), $('#to').val())
+			});
+        }); 
+		
+		var getDate = function( element ) {
+		  var date;
+		  try {
+			date = $.datepicker.parseDate( dateFormat, element.value );
+		  } catch( error ) {
+			date = null;
+		  }
+	 
+		  return date;
+		}
+
+        var initiateAnalysis = function(fromDt,toDt){
+            var host_uri = 'http://localhost:5000';
+            $.ajax({
+                url: host_uri + "/analyzefeed",
+				//url: host_uri + "/static/feed.json",
+                type: 'POST',
+                data: JSON.stringify({
+				 fromDte : fromDt,
+				 toDte : toDt,
+				 frmObj:from,
+				 toObj:to
+                }),
+                dataType    : 'text',
+                contentType : "application/json",
+                "cache": false,
+                success: function(response, status){
+                    response.length;
+					//console.log(response);
+					$('#matches').html(response);
+					/*$.each(response, function(index, item){
+
+					  });*/
+                    //$('#matches').html(html);
+                }
+            });
+        }
+
+		var drillAnalysis = function(Id,User,fromDt,toDt){
+            var host_uri = 'http://localhost:5000';
+            $.ajax({
+                url: host_uri + "/drillanalysis",
+				//url: host_uri + "/static/feed.json",
+                type: 'POST',
+                data: JSON.stringify({
+				 pid : Id,
+				 puser : User,
+				 fromDte : fromDt,
+				 toDte : toDt
+                }),
+                dataType    : 'text',
+                contentType : "application/json",
+                "cache": false,
+                success: function(response, status){
+                    
+					$('#myModal').find('.modal-body').html( response );
+					$('#myModal').modal('toggle');
+					
+                }
+            });
+        }
+    </script>
+</body>
+</html>
